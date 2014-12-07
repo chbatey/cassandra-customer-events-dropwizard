@@ -1,0 +1,4 @@
+cassandra:
+  host: localhost
+
+host: localhost
