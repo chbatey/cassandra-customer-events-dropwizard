@@ -1,6 +1,7 @@
 package info.batey.eventstore.cassandra;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -19,8 +20,10 @@ public class CustomerEventsApp extends Application<ApplicationConfiguration> {
     @Override
     public void run(ApplicationConfiguration applicationConfiguration, Environment environment) throws Exception {
         Cluster cluster = applicationConfiguration.getCassandraFactory().build(environment);
-        CustomerEventDao customerEventDao = new CustomerEventDao(cluster.connect());
-        CustomerEventController customerEventController = new CustomerEventController(customerEventDao);
+        Session connect = cluster.connect();
+        CustomerEventDao customerEventDao = new CustomerEventDao(connect);
+        CustomerEventDaoAsync customerEventDaoAsync = new CustomerEventDaoAsync(connect);
+        CustomerEventController customerEventController = new CustomerEventController(customerEventDao, customerEventDaoAsync);
         environment.jersey().register(customerEventController);
     }
 }

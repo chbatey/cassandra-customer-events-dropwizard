@@ -2,7 +2,7 @@ CREATE KEYSPACE customers WITH replication = {'class': 'SimpleStrategy', 'replic
 
 
 
-CREATE TABLE customer_events( customer_id text, staff_id text, time timeuuid, store_type text, event_type text, tags map<text, text>,  PRIMARY KEY ((customer_id), time));
+CREATE TABLE customer_events( customer_id text, staff_id text, time timeuuid, store_type text, event_type text, tags map<text, text>, text original_json,  PRIMARY KEY ((customer_id), time));
 
 
 create TYPE store (name text, type text, postcode text) ;

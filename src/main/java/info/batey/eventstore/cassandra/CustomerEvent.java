@@ -1,9 +1,17 @@
 package info.batey.eventstore.cassandra;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOError;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 public class CustomerEvent {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     private String customerId;
 
     private UUID time;
@@ -49,7 +57,7 @@ public class CustomerEvent {
         return tags;
     }
 
-    public byte[] serialise() {
-        return new byte[0];
+    public byte[] serialise() throws IOException {
+        return objectMapper.writeValueAsBytes(this);
     }
 }

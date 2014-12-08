@@ -1,0 +1,47 @@
+
+keyspace: customers
+ 
+# The CQL for creating a keyspace (optional if it already exists)
+keyspace_definition: |
+  CREATE KEYSPACE if not exists customers WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '1' };
+
+# Table name
+table: customer_events_comments
+ 
+# The CQL for creating a table you wish to stress (optional if it already exists)
+table_definition: |
+  CREATE TABLE IF NOT EXISTS customer_events_comments (   customer_id text,   time timeuuid,   event_type text,   staff_id text,   store_type text, PRIMARY KEY (customer_id, time) ) ;
+
+### Column Distribution Specifications ###
+ 
+columnspec:
+  - name: customer_id
+    cluster: fixed('chbatey')
+#
+#  - name: time
+#
+#  - name: event_type
+#
+#  - name: staff_id
+#
+#  - store_type:
+#
+#  - tags:
+
+### Batch Ratio Distribution Specifications ###
+ 
+insert:
+  partitions: fixed(1)            # Our partition key is the domain so only insert one per batch
+ 
+  select:    fixed(1)/1000        # We have 1000 posts per domain so 1/1000 will allow 1 post per batch
+ 
+  batchtype: UNLOGGED             # Unlogged batches
+ 
+ 
+#
+# A list of queries you wish to run against the schema
+#
+queries:
+   singlepost:
+      cql: select * from customer_events_comments where customer_id = ? LIMIT 1
+      fields: customer_id
