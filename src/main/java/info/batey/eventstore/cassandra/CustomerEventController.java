@@ -30,7 +30,6 @@ public class CustomerEventController {
     @GET
     @Path("/stream")
     public Response streamEvents() {
-
         final StreamingOutput streamingOutput = outputStream -> {
             final Observable<CustomerEvent> allEvents = customerEventDaoAsync.getCustomerEventsObservable();
             final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -49,12 +48,10 @@ public class CustomerEventController {
                         countDownLatch.countDown();
                     }
                 }
-
                 @Override
                 public void onError(Throwable e) {
                     LOGGER.error("Error streaming events");
                 }
-
                 @Override
                 public void onNext(CustomerEvent customerEvent) {
                     try {
@@ -65,14 +62,12 @@ public class CustomerEventController {
                 }
             });
 
-
             try {
                 countDownLatch.await();
             } catch (InterruptedException e) {
                 LOGGER.warn("Current thread interrupted, resetting flag");
                 Thread.currentThread().interrupt();
             }
-
         };
 
         return Response.ok().entity(streamingOutput).build();
